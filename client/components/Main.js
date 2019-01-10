@@ -1,7 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-ReactDOM.render(
-  <div>Hello, world!</div>,
-  document.getElementById('app') // make sure this is the same as the id of the div in your index.html
-);
+const WelcomePage = props => {
+  return <p>Hello, welcome to Book Search! Search Open Library's book collection by typing a book title in the search bar; e.g. "lord of the rings".</p>;
+};
+export default WelcomePage;
