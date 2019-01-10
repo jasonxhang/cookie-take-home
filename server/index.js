@@ -72,7 +72,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).send(err.message || 'Internal server error');
 });
 
-const PORT = 1337;
+const PORT = process.env.PORT || 1337
 
 app.listen(PORT, () =>
   console.log(`studiously serving silly sounds on port ${PORT}`)
