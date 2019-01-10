@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { Search } from './components';
 import Routes from './routes';
@@ -6,7 +7,9 @@ import Routes from './routes';
 const App = () => {
   return (
     <div>
-      <div>Book Search</div>
+      <Link to={'/'}>
+        <div>Home</div>
+      </Link>
       <Search />
       <Routes />
     </div>
