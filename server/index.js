@@ -24,7 +24,7 @@ app.use(
 );
 
 // static middleware
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // app.use('/api', require('./api')) // include our routes!
 app.get('/api/search', (req, res, next) => {
