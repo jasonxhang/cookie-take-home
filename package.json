@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build-client": "webpack -p",
+    "deploy": "script/deploy",
+    "heroku-token": "script/encrypt-heroku-auth-token",
     "start-dev": "npm run build-watch & npm run start-server",
     "start-server": "nodemon server -e html,js,css --ignore public",
     "build-watch": "webpack -w",
-    "start": "echo 'Running server for production - developers, use npm run start:dev for development' && node server"
+    "start": "echo 'Running server for production - developers, use npm run start:dev for development' && node server/index.js"
   },
   "author": "",
   "license": "ISC",
