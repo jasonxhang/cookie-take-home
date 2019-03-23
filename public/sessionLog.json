@@ -1,0 +1,12 @@
+{
+  "Sample": {
+    "userId": "example",
+    "color": "n/a",
+    "counter": "n/a"
+  },
+  "efac2ddc-8bfe-4bd3-8b1f-2441887b0cd8": {
+    "userId": "efac2ddc-8bfe-4bd3-8b1f-2441887b0cd8",
+    "color": "red",
+    "counter": 5
+  }
+}

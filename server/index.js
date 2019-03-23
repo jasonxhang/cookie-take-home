@@ -1,10 +1,8 @@
 'use strict';
-
 const express = require('express');
 const path = require('path');
 const volleyball = require('volleyball');
-const session = require('express-session');
-const request = require('request');
+const fs = require('fs');
 
 const app = express();
 
@@ -15,52 +13,106 @@ app.use(volleyball);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || 'a wildly insecure secret',
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-
 // static middleware
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// app.use('/api', require('./api')) // include our routes!
-app.get('/api/search', (req, res, next) => {
-  const search = req.query.title;
-  const requestSettings = {
-    url: `http://openlibrary.org/search.json?title=${search}`,
-  };
-
-  request(requestSettings, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      res.status(200).send(body);
-    } else {
-      console.error(error);
-      res.json(error);
-    }
-  });
+app.get('/api/report', (req, res, next) => {
+  try {
+    fs.readFile(
+      path.join(__dirname, '..', 'public', 'sessionLog.json'),
+      (err, data) => {
+        if (err) throw err;
+        let logData = JSON.parse(data);
+        res.json(logData);
+      }
+    );
+  } catch (e) {
+    next(e);
+  }
 });
 
-app.get('/api/books/:id', (req, res, next) => {
-  const bookId = req.params.id;
+app.post('/api/report', (req, res, next) => {
+  try {
+    const { userId, color, counter } = req.body;
+    const newData = {
+      userId,
+      color,
+      counter,
+    };
 
-  const requestSettings = {
-    url: `https://openlibrary.org/api/books?bibkeys=${bookId}&jscmd=details&format=json`,
-  };
-
-  request(requestSettings, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      res.status(200).send(body);
-    } else {
-      console.error(error);
-      res.json(err);
-    }
-  });
+    fs.readFile(
+      path.join(__dirname, '..', 'public', 'sessionLog.json'),
+      (err, data) => {
+        if (err) throw err;
+        let logData = JSON.parse(data);
+        logData[userId] = newData;
+        fs.writeFile(
+          path.join(__dirname, '..', 'public', 'sessionLog.json'),
+          JSON.stringify(logData, undefined, 2),
+          err => {
+            if (err) throw err;
+            console.log('Data written to file');
+          }
+        );
+      }
+    );
+    res.sendStatus(200);
+  } catch (e) {
+    next(e);
+  }
 });
 
+app.put('/api/report', (req, res, next) => {
+  try {
+    const {id} = req.body
 
+
+    fs.readFile(
+      path.join(__dirname, '..', 'public', 'sessionLog.json'),
+      (err, data) => {
+        if (err) throw err;
+        let logData = JSON.parse(data);
+        delete logData[id]
+        fs.writeFile(
+          path.join(__dirname, '..', 'public', 'sessionLog.json'),
+          JSON.stringify(logData, undefined, 2),
+          err => {
+            if (err) throw err;
+            console.log('Data updated');
+          }
+        );
+      }
+    );
+    res.sendStatus(200);
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.delete('/api/report', (req, res, next) => {
+  try {
+    const originalData = {
+      Sample: {
+        userId: 'example',
+        color: 'n/a',
+        counter: 'n/a',
+      },
+    };
+
+    fs.writeFile(
+      path.join(__dirname, '..', 'public', 'sessionLog.json'),
+      JSON.stringify(originalData, undefined, 2),
+      err => {
+        if (err) throw err;
+        console.log('Data reset');
+      }
+    );
+
+    res.sendStatus(200);
+  } catch (e) {
+    next(e);
+  }
+});
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
@@ -72,7 +124,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).send(err.message || 'Internal server error');
 });
 
-const PORT = process.env.PORT || 1337
+const PORT = process.env.PORT || 1337;
 
 app.listen(PORT, () =>
   console.log(`studiously serving silly sounds on port ${PORT}`)

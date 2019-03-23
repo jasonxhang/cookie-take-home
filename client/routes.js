@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-
 import { Route, Switch } from 'react-router-dom';
-import { Main, Results, SingleBook } from './components';
+import { Main, Report } from './components';
 
 class Routes extends Component {
   render() {
@@ -9,8 +8,7 @@ class Routes extends Component {
       <div>
         <Switch>
           <Route exact path="/" component={Main} />
-          <Route path="/search" component={Results} />
-          <Route exact path="/book/:id" component={SingleBook} />
+          <Route exact path="/report" component={Report} />
         </Switch>
       </div>
     );
